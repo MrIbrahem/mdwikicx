@@ -104,6 +104,9 @@ class LanguageNameUtils {
 	 * @return bool Whether language is supported
 	 */
 	public function isSupportedLanguage( string $code ): bool {
+		if ( $code == 'mdwiki' ) {
+			return true;
+		}
 		if ( !$this->isValidBuiltInCode( $code ) ) {
 			return false;
 		}
@@ -134,6 +137,9 @@ class LanguageNameUtils {
 	 *  characters or characters that are illegal in MediaWiki titles.
 	 */
 	public function isValidCode( string $code ): bool {
+		if ( $code == 'mdwiki' ) {
+			return true;
+		}
 		if ( !isset( $this->validCodeCache[$code] ) ) {
 			// People think language codes are HTML-safe, so enforce it. Ideally, we should only
 			// allow a-zA-Z0-9- but .+ and other chars are often used for {{int:}} hacks.  See bugs
@@ -169,6 +175,9 @@ class LanguageNameUtils {
 	public function isKnownLanguageTag( string $tag ): bool {
 		// Quick escape for invalid input to avoid exceptions down the line when code tries to
 		// process tags which are not valid at all.
+		if ( $tag == 'mdwiki' ) {
+			return true;
+		}
 		if ( !$this->isValidBuiltInCode( $tag ) ) {
 			return false;
 		}
