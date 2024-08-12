@@ -89,7 +89,7 @@ class ApiContentTranslationPublish extends ApiBase {
 		$sourceLink = '[[:' . Sitemapper::getDomainCode( $params['from'] )
 			. ':Special:Redirect/revision/'
 			. $this->translation->translation['sourceRevisionId']
-			. '|' . $params['sourcetitle'] . ']] to:' . $params['from'];
+			. '|' . $params['sourcetitle'] . ']] to:' . $params['to'];
 
 		$summary = $this->msg(
 			'cx-publish-summary',
