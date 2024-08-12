@@ -95,6 +95,8 @@ class ApiContentTranslationPublish extends ApiBase {
 			'cx-publish-summary',
 			$sourceLink
 		)->inContentLanguage()->text();
+		
+		$wikitext .= "\n{{tr|" . $params['to'] . '|' . $params['sourcetitle'] . '}}';
 
 		$apiParams = [
 			'action' => 'edit',
