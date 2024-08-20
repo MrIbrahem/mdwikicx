@@ -361,6 +361,17 @@
 			"description": "The external Database cluster name where the database lives or false if not exists",
 			"value": false
 		},
+		"ContentTranslationSiteTemplates_mdwiki": {
+			"value": {
+				"view": "//mdwiki.org/wiki/$2",
+				"action": "//mdwiki.org/w/index.php?title=$2",
+				"apix": "//mdwiki.org/w/api.php",
+				"api": "//medwiki.toolforge.org/mdwiki_api.php",
+				"cx": "https://cxserver.wikimedia.org/v1",
+				"cookieDomain": null,
+				"restbase": "//mdwiki.org/api/rest_v1"
+			}
+		},
 		"ContentTranslationSiteTemplates": {
 			"value": {
 				"view": "//$1.wikipedia.org/wiki/$2",
@@ -926,6 +937,7 @@
 					"config": {
 						"DomainCodeMapping": "ContentTranslationDomainCodeMapping",
 						"SiteTemplates": "ContentTranslationSiteTemplates",
+						"SiteTemplates_mdwiki": "ContentTranslationSiteTemplates_mdwiki",
 						"TranslateInTarget": "ContentTranslationTranslateInTarget"
 					}
 				}
