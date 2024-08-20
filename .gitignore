@@ -1,11 +1,17 @@
-
+*.html
+cxsever/www/js/package-lock.json
+cxsever/www/js/se2.js
+/0
+/old
 /مقارنة
 ‏‏extensions - اختصار.lnk
 public_html/web1.config
-mobile.html
-public_html/all.html
-public_html/get_html/old.html
-*.html
-md.tar.gz
-cxsever/www/js/se2.js
-cxsever/www/js/package-lock.json
+**.tar.gz
+public_html/mediawiki/*
+public_html/mediawiki1
+public_html/md1
+public_html/md/**
+
+!public_html/md/extensions/ContentTranslation
+!public_html/md/includes/language/LanguageNameUtils.php
+public_html/mdx
