@@ -15,3 +15,4 @@ public_html/md/**
 !public_html/md/extensions/ContentTranslation
 !public_html/md/includes/language/LanguageNameUtils.php
 public_html/mdx
+/cxsever/www/js/node_modules

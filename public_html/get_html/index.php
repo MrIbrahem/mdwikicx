@@ -10,35 +10,6 @@ if (isset($_GET['test'])) {
     ini_set('display_errors', 1);
 }
 
-function get_text_html($title, $revision)
-{
-    // ---
-    // replace " " by "_"
-    $title = str_replace(" ", "_", $title);
-    // fix / in title
-    $title = str_replace("/", "%2F", $title);
-    // ---
-    $url = "https://mdwiki.org/w/rest.php/v1/page/" . $title . "/html";
-    // ---
-    if ($revision != '') {
-        $url = "https://mdwiki.org/w/rest.php/v1/revision/" . $revision . "/html";
-    }
-    // ---
-    $text = "";
-    // ---
-    try {
-        $res = get_url_params_result($url);
-        if ($res) {
-            $text = $res;
-        }
-    } catch (Exception $e) {
-        $text = "";
-    };
-    // ---
-    return $text;
-}
-
-
 function fix_it($text)
 {
     $url = 'https://ncc2c.toolforge.org/textp';
@@ -67,7 +38,6 @@ function fix_it($text)
         return 'Error: Unexpected response format.';
     }
 }
-
 
 function get_revision($HTML_text)
 {

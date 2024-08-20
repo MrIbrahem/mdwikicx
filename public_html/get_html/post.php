@@ -48,3 +48,35 @@ function post_url_params_result(string $endPoint, array $params = []): string
     curl_close($ch);
     return $output;
 }
+
+
+function get_text_html($title, $revision)
+{
+    // ---
+    // replace " " by "_"
+    $title = str_replace(" ", "_", $title);
+    // fix / in title
+    $title = str_replace("/", "%2F", $title);
+    // ---
+    $domain = "https://mdwiki.org";
+    // $domain = "https://mdwiki.wmcloud.org";
+    // ---
+    $url = "$domain/w/rest.php/v1/page/" . $title . "/html";
+    // ---
+    if ($revision != '') {
+        $url = "$domain/w/rest.php/v1/revision/" . $revision . "/html";
+    }
+    // ---
+    $text = "";
+    // ---
+    try {
+        $res = get_url_params_result($url);
+        if ($res) {
+            $text = $res;
+        }
+    } catch (Exception $e) {
+        $text = "";
+    };
+    // ---
+    return $text;
+}

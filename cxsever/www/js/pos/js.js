@@ -1,19 +1,16 @@
 
-async function get_files_api(title) {
-    var url = 'https://mdwiki.toolforge.org/cx/get_html.php?' + jQuery.param({ "title": title })
+async function get_files_api_new(title, ty) {
+    // var url = 'https://medwiki.toolforge.org/get_html/rest_v1_page.php?title=' + title
 
     const options = {
         method: 'GET',
         dataType: 'json',
-        // dispatcher: new Agent({ connect: { timeout: 60_000 } })
     };
-    const response = await fetch(url, options);
+    const response = await fetch('/' + ty + '/' + title, options);
 
-    const data = await response.json();
+    const result = await response.json();
 
-    const segmentedContent = data.segmentedContent;
-
-    return segmentedContent;
+    return result.result;
 }
 
 function get_files() {
@@ -21,7 +18,7 @@ function get_files() {
 
     var title = $("#title").val();
     (async () => {
-        const oldtext = await get_files_api(title);
+        const oldtext = await get_files_api_new(title, 'pagetext');
 
         $("#oldtext").val(oldtext);
 
@@ -64,6 +61,21 @@ function fix_it() {
         const newtext = await fix_it_api(text);
         $("#new").val(newtext);
         $("#load_fixit").hide();
+
+    })();
+}
+
+
+function get_Fixed() {
+    $("#load_Fixed").show();
+
+    var title = $("#title").val();
+    (async () => {
+        const oldtext = await get_files_api_new(title, "page");
+
+        $("#fixed_text").val(oldtext);
+
+        $("#load_Fixed").hide();
 
     })();
 }

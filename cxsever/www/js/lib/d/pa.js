@@ -2,34 +2,37 @@
 
 // const { Agent } = require('undici');
 
-var u = require('./u.js');
+// function get_html_text(sourceTitle) {
 
-async function get_html_text(sourceTitle) {
+// 	// const title = sourceTitle.replace(/ /g, "_")
 
-	// const title = sourceTitle.replace(/ /g, "_")
+// 	const url = "https://medwiki.toolforge.org/get_html/rest_v1_page.php?title=" + sourceTitle
+// 	const options = {
+// 		method: 'GET',
+// 		// dispatcher: new Agent({ connect: { timeout: 60_000 } })
+// 	};
 
-	const url = "https://mdwiki.toolforge.org/cx/get_html.php?title=" + sourceTitle
+// 	const response = fetch(url, options);
+
+// 	const text = response.text();
+
+// 	return text;
+// };
+
+function get_files_api_new(title, callback) {
+	var url = 'https://medwiki.toolforge.org/get_html/rest_v1_page.php?title=' + title
+
 	const options = {
 		method: 'GET',
 		dataType: 'json',
-		// dispatcher: new Agent({ connect: { timeout: 60_000 } })
 	};
-	return await fetch(url, options)
-		.then((response) => response.json())
-		.then((response) => response.segmentedContent);
-};
-
-function get_page(title) {
-	const source = get_html_text(title);
-	if (!source || !source.length) {
-		return "no source";
-	}
-	console.log(source);
-	const result = u.tet(source);
-	return result;
+	return fetch(url, options)
+		.then(response => response.json())
+		.then(data => data.text)
+		.then(result => callback(result))
 }
 
 module.exports = {
-	get_page,
-	get_html_text
+	// get_html_text,
+	get_files_api_new
 };
