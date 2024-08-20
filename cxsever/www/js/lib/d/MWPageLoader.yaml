@@ -1,0 +1,36 @@
+removableSections:
+  classes:
+    - ambox
+    - hatnote
+    - metadata
+    - navbar
+    - navbox
+    - sisterproject
+    - sistersitebox
+    - vertical-navbox
+  rdfa:
+    - mw:Extension/indicator
+    - mw:Extension/templatestyles
+  templates:
+    - /^pp(-.*)?$/
+    - /^Articles (for|with|needing|containing).*$/
+    - /^Engvar[AB]$/
+    - /^Use[\sa-z]+(English|spelling|referencing)$/
+    - /^Use [DMY]+ dates$/
+    - /^Wikipedia articles (for|with|needing|containing).*$/
+    - Anchor
+    - DEFAULTSORT
+    - Esborrany # Stub category in es.wikipedia
+    - Featured article
+    - FR
+    - good article
+    - /^(.*-)?Stub$/
+    - /^#unlinkedwikibase:id=Q\d+$/
+    - Short description
+    - Void
+    - Italic title # T216044
+    - TOC limit
+    - About
+    - Distinguish
+    - See also # T300958
+    - Redirect # T300958
