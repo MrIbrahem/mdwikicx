@@ -1,10 +1,10 @@
 *.html
 cxsever/www/js/package-lock.json
 cxsever/www/js/se2.js
-0/**
+
 /old
 /مقارنة
-‏‏extensions - اختصار.lnk
+*.lnk
 public_html/web1.config
 **.tar.gz
 public_html/mediawiki/*
