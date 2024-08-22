@@ -38,7 +38,34 @@ function fix_it($text)
         return 'Error: Unexpected response format.';
     }
 }
-
+function is_bad_fix($text)
+{
+    $dom = new DOMDocument();
+    @$dom->loadHTML($text);
+    // ---
+    $bad_tags = [
+        "style",
+        "link"
+    ];
+    foreach ($bad_tags as $tag) {
+        $ems = $dom->getElementsByTagName($tag);
+        // ---
+        foreach ($ems as $ent) {
+            $ent->parentNode->removeChild($ent);
+        }
+    }
+    // ---
+    $elements = $dom->getElementsByTagName('section');
+    // ---
+    foreach ($elements as $element) {
+        $t = trim($element->textContent);
+        if ($t == "") {
+            return true;
+        }
+    }
+    // ---
+    return false;
+}
 function get_revision($HTML_text)
 {
     if ($HTML_text != '') {
@@ -54,44 +81,83 @@ function get_revision($HTML_text)
     return "";
 };
 
-$sourcelanguage = filter_input(INPUT_GET, 'sourcelanguage', FILTER_SANITIZE_STRING) ?? 'en';
-$title = filter_input(INPUT_GET, 'title', FILTER_SANITIZE_STRING) ?? '';
-$revision = filter_input(INPUT_GET, 'revision', FILTER_SANITIZE_STRING) ?? '';
-$no_fix = filter_input(INPUT_GET, 'nofix', FILTER_VALIDATE_BOOLEAN) ?? false;
-$section0 = filter_input(INPUT_GET, 'section0', FILTER_VALIDATE_BOOLEAN) ?? true;
+$sourcelanguage = $_GET['sourcelanguage'] ?? 'en';
+$title = $_GET['title'] ?? '';
+$revision = $_GET['revision'] ?? '';
+$section0 = $_GET['section0'] ?? '';
+
+$no_fix = $_GET['nofix'] ?? '';
+$printetxt = $_GET['printetxt'] ?? '';
+$rmstyle = $_GET['rmstyle'] ?? '';
+
+function print_data($revision, $HTML_text, $error = "")
+{
+    global $sourcelanguage, $title;
+    // ---
+    $jsonData = [
+        "sourceLanguage" => $sourcelanguage,
+        "title" => $title,
+        "revision" => $revision,
+        "segmentedContent" => $HTML_text,
+        "categories" => []
+    ];
+    // ---
+    if ($error != "") {
+        $jsonData['error'] = $error;
+    }
+    // ---
+    // Encode data as JSON with appropriate options
+    // $jsonOutput = json_encode($jsonData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    $jsonOutput = json_encode($jsonData);
+
+    // Output the JSON
+    echo $jsonOutput;
+}
 
 $HTML_text = "";
 
 if ($title != '' || $revision != '') {
     $HTML_text = get_text_html($title, $revision);
+    $test_js = json_decode($HTML_text, true);
+    // {"errorKey":"rest-nonexistent-title","messageTranslations":{"en":"The specified title (Sympathetic_crasxhing_acute_pulmonary_edema) does not exist"},"httpCode":404,"httpReason":"Not Found"}
+    if ($test_js != false && isset($test_js['errorKey'])) {
+        $HTML_text = "";
+        $message = $test_js['messageTranslations']['en'] ?? 'The specified title does not exist';
+        print_data($revision, $HTML_text, $error = $message);
+        // http_response_code(404);
+        exit(1);
+    }
 }
-
-if ($revision == '') {
-    $revision = get_revision($HTML_text);
-}
+$error = '';
 
 if ($HTML_text != '') {
+    if ($revision == '') {
+        $revision = get_revision($HTML_text);
+    }
+
     $HTML_text = do_changes($HTML_text, $section0);
+
+    if ($rmstyle != '') {
+        $HTML_text = remove_all_style_tags($HTML_text);
+    }
+
+    if ($no_fix == '') {
+        $HTML_text = fix_it($HTML_text);
+
+        // if (is_bad_fix($HTML_text)) {
+        //     $error = "Fixing failed";
+        // }
+    }
+    // Decode HTML_text using htmlentities
+    // $HTML_text = utf8_encode($HTML_text);
+
+    $HTML_text = dom_it($HTML_text);
+
+    // $HTML_text = str_replace("<section", "\n<section", $HTML_text);
 }
 
-if (!$no_fix) {
-    $HTML_text = fix_it($HTML_text);
+if ($printetxt != '') {
+    echo $HTML_text;
+    return;
 }
-
-// Decode HTML_text using htmlentities
-$HTML_text = utf8_encode($HTML_text);
-
-$jsonData = [
-    "sourceLanguage" => $sourcelanguage,
-    "title" => $title,
-    "revision" => $revision,
-    "segmentedContent" => $HTML_text,
-    "categories" => []
-];
-
-// Encode data as JSON with appropriate options
-// $jsonOutput = json_encode($jsonData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-$jsonOutput = json_encode($jsonData);
-
-// Output the JSON
-echo $jsonOutput;
+print_data($revision, $HTML_text, $error=$error);
