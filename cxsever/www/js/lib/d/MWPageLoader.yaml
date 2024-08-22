@@ -25,12 +25,16 @@ removableSections:
     - FR
     - good article
     - /^(.*-)?Stub$/
-    - /^#unlinkedwikibase:id=Q\d+$/
     - Short description
     - Void
     - Italic title # T216044
-    - TOC limit
     - About
-    - Distinguish
     - See also # T300958
     - Redirect # T300958
+    - Distinguish
+    - TOC limit
+    # - /^Redirect\-distinguish$/
+    - /^#unlinkedwikibase:id=Q\d+$/
+    - Other uses
+    - redirect # T300958
+
