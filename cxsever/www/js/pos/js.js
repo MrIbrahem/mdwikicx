@@ -1,5 +1,5 @@
 
-async function get_files_api_new(title, ty) {
+async function get_text_api_new(title, ty) {
     // var url = 'https://medwiki.toolforge.org/get_html/rest_v1_page.php?title=' + title
 
     const options = {
@@ -11,20 +11,6 @@ async function get_files_api_new(title, ty) {
     const result = await response.json();
 
     return result.result;
-}
-
-function get_files() {
-    $("#load_files").show();
-
-    var title = $("#title").val();
-    (async () => {
-        const oldtext = await get_files_api_new(title, 'pagetext');
-
-        $("#oldtext").val(oldtext);
-
-        $("#load_files").hide();
-
-    })();
 }
 
 async function fix_it_api(text) {
@@ -47,10 +33,31 @@ async function fix_it_api(text) {
 
     return result;
 }
+
+function do_seconds(start_time, id) {
+    const time = new Date().getSeconds() - start_time;
+
+    $(id).text( "in " + time + " Seconds");
+}
+
+function get_text(ty) {
+    var start_time = new Date().getSeconds();
+    $("#load_" + ty).show();
+
+    var title = $("#title_"+ty).val();
+    (async () => {
+        const oldtext = await get_text_api_new(title, ty);
+        $("#old_" + ty).val(oldtext);
+        $("#load_" + ty).hide();
+        do_seconds(start_time, "#time_" + ty);
+
+    })();
+}
 function fix_it() {
+    var start_time = new Date().getSeconds();
     $("#load_fixit").show();
 
-    var text = $("#oldtext").val();
+    var text = $("#old_pagetext").val();
     if (!text) {
         $("#load_fixit").hide();
         $("#new").val("no text");
@@ -61,21 +68,23 @@ function fix_it() {
         const newtext = await fix_it_api(text);
         $("#new").val(newtext);
         $("#load_fixit").hide();
+        do_seconds(start_time, "#time_fixit");
 
     })();
 }
 
-
 function get_Fixed() {
+    var start_time = new Date().getSeconds();
     $("#load_Fixed").show();
 
     var title = $("#title").val();
     (async () => {
-        const oldtext = await get_files_api_new(title, "page");
+        const oldtext = await get_text_api_new(title, "page");
 
         $("#fixed_text").val(oldtext);
 
         $("#load_Fixed").hide();
+        do_seconds(start_time, "#time_Fixed");
 
     })();
 }
