@@ -95,6 +95,10 @@ function print_data($revision, $HTML_text, $error = "")
 {
     global $sourcelanguage, $title;
     // ---
+    if ($sourcelanguage == "mdwiki") {
+        $sourcelanguage = "en";
+    }
+    // ---
     $jsonData = [
         "sourceLanguage" => $sourcelanguage,
         "title" => $title,
@@ -117,8 +121,33 @@ function print_data($revision, $HTML_text, $error = "")
 
 $HTML_text = "";
 
-if ($title != '' || $revision != '') {
-    $HTML_text = get_text_html($title, $revision);
+
+function get_medwiki_html($title)
+{
+    // ---
+    // replace " " by "_"
+    $title = "Md:" . str_replace(" ", "_", $title);
+    // fix / in title
+    $title = str_replace("/", "%2F", $title);
+    // ---
+    $url = "https://medwiki.toolforge.org/w/rest.php/v1/page/" . $title . "/html";
+    // ---
+    $text = "";
+    // ---
+    try {
+        $res = get_url_params_result($url);
+        if ($res) {
+            $text = $res;
+        }
+    } catch (Exception $e) {
+        $text = "";
+    };
+    // ---
+    return $text;
+}
+
+if ($title != '') {
+    $HTML_text = get_medwiki_html($title);
     $test_js = json_decode($HTML_text, true);
     // {"errorKey":"rest-nonexistent-title","messageTranslations":{"en":"The specified title (Sympathetic_crasxhing_acute_pulmonary_edema) does not exist"},"httpCode":404,"httpReason":"Not Found"}
     if ($test_js != false && isset($test_js['errorKey'])) {
@@ -157,6 +186,9 @@ if ($HTML_text != '') {
     // $HTML_text = utf8_encode($HTML_text);
 
     $HTML_text = dom_it($HTML_text);
+    $HTML_text = str_replace("https://medwiki.toolforge.org/md/", "https://en.wikipedia.org/w/", $HTML_text);
+    $HTML_text = str_replace("https://medwiki.toolforge.org/w/", "https://en.wikipedia.org/w/", $HTML_text);
+    $HTML_text = str_replace("https://medwiki.toolforge.org/wiki/", "https://en.wikipedia.org/wiki/", $HTML_text);
 
     // $HTML_text = str_replace("<section", "\n<section", $HTML_text);
 }
@@ -165,4 +197,4 @@ if ($printetxt != '') {
     echo $HTML_text;
     return;
 }
-print_data($revision, $HTML_text, $error=$error);
+print_data($revision, $HTML_text, $error = $error);

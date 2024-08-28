@@ -273,8 +273,25 @@ mw.cx.init.Translation.prototype.attachToDOM = function (veTarget) {
  */
 mw.cx.init.Translation.prototype.fetchSourcePageContent_mdwiki = async function (wikiPage, targetLanguage, siteMapper) {
 	// Manual normalisation to avoid redirects on spaces but not to break namespaces
-	const title = wikiPage.getTitle().replace(/ /g, '_')
+	var title = wikiPage.getTitle().replace(/ /g, '_')
+	title = title.replace('/', '%2F')
 
+	const simple_url = "https://cxserver.wikimedia.org/v2/page/simple/" + targetLanguage + "/User:Mr.%20Ibrahem%2F" + title;
+
+	const simple_result = await fetch(simple_url)
+		.then((response) => {
+			if (response.ok) {
+				return response.json();
+			}
+		})
+
+	if (simple_result) {
+		simple_result.sourceLanguage = "en";
+		// replace simple.wikipedia with en.wikipedia
+		simple_result.segmentedContent = simple_result.segmentedContent.replace(/simple.wikipedia/g, "en.wikipedia");
+
+		return simple_result;
+	}
 	const fetchParams = {
 		sourcelanguage: "mdwiki",
 		targetlanguage: targetLanguage,

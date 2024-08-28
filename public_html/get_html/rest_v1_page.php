@@ -32,8 +32,14 @@ $revision = filter_input(INPUT_GET, 'revision', FILTER_SANITIZE_STRING) ?? '';
 
 $HTML_text = "";
 
+$domain = "";
+
+if (isset($_GET['wmcloud'])) {
+	$domain = "https://mdwiki.wmcloud.org";
+};
+
 if ($title != '' || $revision != '') {
-    $HTML_text = get_text_html($title, $revision);
+    $HTML_text = get_text_html($title, $revision, $domain = $domain);
     $jsonData = [
         "text" => $HTML_text
     ];

@@ -1,23 +1,26 @@
 <?php
-// ضبط نوع المحتوى
-header('Content-Type: application/json');
+
+
 header("Access-Control-Allow-Origin: *");
 
-// عنوان API الهدف
+$wmcloud = $_GET['wmcloud'] ?? ($_POST['wmcloud'] ?? '');
+
 $api_url = "https://mdwiki.org/w/api.php";
 
-// الحصول على طريقة الطلب (GET أو POST)
+if ($wmcloud !== '') {
+    $api_url = "https://mdwiki.wmcloud.org/w/api.php";
+}
+
 $request_method = $_SERVER['REQUEST_METHOD'];
 
-// تهيئة بيانات POST إن كانت موجودة
 $post_data = ($request_method === 'POST') ? file_get_contents('php://input') : '';
+$query_string = $_SERVER['QUERY_STRING'] ?? '';
 
-// تهيئة طلب cURL
+// echo "query_string: " . $query_string . "<br>";
+// echo "post_data: " . $post_data . "<br>";
 $ch = curl_init();
 
-// إذا كان الطلب GET، نضيف المعاملات إلى URL
 if ($request_method === 'GET') {
-    $query_string = $_SERVER['QUERY_STRING'];
     $url = $api_url . '?' . $query_string;
     curl_setopt($ch, CURLOPT_URL, $url);
 } else {
@@ -25,17 +28,13 @@ if ($request_method === 'GET') {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 }
-
 $usr_agent = "WikiProjectMed Translation Dashboard/1.0 (https://mdwiki.toolforge.org/; tools.mdwiki@toolforge.org)";
 
-// إعدادات cURL العامة
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_USERAGENT, $usr_agent);
 
-// تنفيذ الطلب
 $response = curl_exec($ch);
 
-// التأكد من عدم وجود أخطاء في التنفيذ
 if (curl_errno($ch)) {
     echo 'Error:' . curl_error($ch);
 }
@@ -45,10 +44,11 @@ if ($http_code !== 200) {
     echo 'Error: API request failed with status code ' . $http_code;
 }
 
-// إغلاق طلب cURL
 curl_close($ch);
 
-// عرض الاستجابة
-echo $response;
+// get Content-Type from header
+$content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
-?>
+header('Content-Type: ' . $content_type);
+
+echo $response;
