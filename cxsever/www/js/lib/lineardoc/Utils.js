@@ -375,9 +375,18 @@ function setLinkIdsInPlace( textChunks, getNextId ) {
 			) {
 				// Hack: copy href, then remove it, then re-add it, so that
 				// attributes appear in alphabetical order (ugh)
-				const href = tag.attributes.href;
+				var href = tag.attributes.href;
+				// split href before ?
+				if ( href.indexOf( '?' ) !== -1 ) {
+					href = href.split( '?' )[ 0 ];
+				}
+
+				delete tag.attributes.typeof;
 				delete tag.attributes.href;
-				tag.attributes.class = [ tag.attributes.class, 'cx-link' ].join( ' ' ).trim();
+				delete tag.attributes[ 'data-mw-i18n' ];
+				// tag.attributes.class = [ tag.attributes.class, 'cx-link' ].join( ' ' ).trim();
+				tag.attributes.class = "cx-link";
+
 				tag.attributes[ 'data-linkid' ] = getNextId( 'link' );
 				tag.attributes.href = href;
 			}
