@@ -3,7 +3,7 @@
 // https://mdwiki.org/w/rest.php/v1/page/Sympathetic_crashing_acute_pulmonary_edema/html
 // https://mdwiki.org/w/rest.php/v1/revision/1420795/html
 
-$usr_agent = 'WikiProjectMed Translation Dashboard/1.0 (https://mdwiki.toolforge.org/; tools.mdwiki@toolforge.org)';
+$usr_agent = 'WikiProjectMed Translation Dashboard/1.0 (https://medwiki.toolforge.org/; tools.medwiki@toolforge.org)';
 
 function get_url_params_result(string $url): string
 {
@@ -12,8 +12,6 @@ function get_url_params_result(string $url): string
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
-    // curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
     curl_setopt($ch, CURLOPT_USERAGENT, $usr_agent);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -33,8 +31,6 @@ function post_url_params_result(string $endPoint, array $params = []): string
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // curl_setopt($ch, CURLOPT_COOKIEJAR, "cookie.txt");
-    // curl_setopt($ch, CURLOPT_COOKIEFILE, "cookie.txt");
     curl_setopt($ch, CURLOPT_USERAGENT, $usr_agent);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -50,7 +46,7 @@ function post_url_params_result(string $endPoint, array $params = []): string
 }
 
 
-function get_text_html($title, $revision)
+function get_text_html($title, $revision, $domain = "https://mdwiki.org")
 {
     // ---
     // replace " " by "_"
@@ -58,7 +54,9 @@ function get_text_html($title, $revision)
     // fix / in title
     $title = str_replace("/", "%2F", $title);
     // ---
-    $domain = "https://mdwiki.org";
+    $domain = ($domain != "") ? $domain : "https://mdwiki.org";
+    // ---
+    // $domain = "https://mdwiki.org";
     // $domain = "https://mdwiki.wmcloud.org";
     // ---
     $url = "$domain/w/rest.php/v1/page/" . $title . "/html";
@@ -79,4 +77,50 @@ function get_text_html($title, $revision)
     };
     // ---
     return $text;
+}
+
+
+function get_section_0_and_html($title)
+{
+    $params = array(
+        "action" => "parse",
+        "format" => "json",
+        "page" => $title,
+        "section" => "0",
+        "prop" => "wikitext|revid"
+    );
+    $url = "https://mdwiki.org/w/api.php?" . http_build_query($params);
+
+    $req = get_url_params_result($url);
+    $json1 = json_decode($req, true);
+
+    $first = $json1["parse"]["wikitext"]["*"] ?? '';
+    $revid = $json1["parse"]["revid"] ?? '';
+    // ---
+    if ($first == '') {
+        return ['',''];
+    }
+    // ---
+    $first .= "\n==References==\n<references />";
+    // ---
+    $params2 = [
+        'action' => 'flow-parsoid-utils',
+        'format' => 'json',
+        'from' => 'wikitext',
+        'to' => 'html',
+        'content' => $first,
+        'title' => 'Main_Page',
+        'utf8' => 1,
+        'formatversion' => '2'
+    ];
+    // ---
+    $url2 = "https://www.mediawiki.org/w/api.php?" . http_build_query($params2);
+    // ---
+    $req2 = get_url_params_result($url2);
+    // ---
+    $json2 = json_decode($req2, true);
+    // ---
+    $html = $json2['flow-parsoid-utils']['content'] ?? '';
+    // ---
+    return [$html, $revid];
 }
