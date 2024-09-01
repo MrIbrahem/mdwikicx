@@ -6,9 +6,9 @@ var pa = require('./lib/d/pa.js');
 
 var app = express();
 
-app.use(cors({
-	origin: ['http://localhost:300'] // Replace with your actual frontend origin
-}));
+// app.use(cors({ origin: ['http://localhost:300']}));
+
+app.use(cors())
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
