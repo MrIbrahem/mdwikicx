@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require __DIR__ . "/../m.php";
+require_once __DIR__ . "/../m.php";
 
 // get old.html
 $old = file_get_contents(__DIR__ . "/old.html");
