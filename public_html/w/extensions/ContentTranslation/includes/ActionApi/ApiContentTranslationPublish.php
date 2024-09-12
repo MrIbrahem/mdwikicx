@@ -135,9 +135,11 @@ class ApiContentTranslationPublish extends ApiBase {
 			$t_Params = [
 				'title' => $title->getPrefixedDBkey(),
 				'text' => $wikitext,
+				'revid' => $sourceRevisionId,
 				'user' => $user_name,
 				'summary' => $summary,
 				'target' => $params['to'],
+				'campaign' => $params['campaign'],
 				'sourcetitle' => $params['sourcetitle'],
 			];
 
@@ -403,6 +405,7 @@ class ApiContentTranslationPublish extends ApiBase {
 				ParamValidator::PARAM_ISMULTI => true,
 			],
 			/** @todo These should be renamed to something all-lowercase and lacking a "wp" prefix */
+			'campaign' => null,
 			'wpCaptchaId' => null,
 			'wpCaptchaWord' => null,
 			'cxversion' => [
