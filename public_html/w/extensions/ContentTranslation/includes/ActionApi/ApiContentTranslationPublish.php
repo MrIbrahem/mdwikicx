@@ -43,16 +43,14 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 function post_to_target($params)
 {
-	$url = 'https://mdwiki.toolforge.org/Translation_Dashboard/publish/main.php';
+	// $url = 'https://mdwiki.toolforge.org/Translation_Dashboard/publish/main.php';
+	$url = 'https://mdwiki.toolforge.org/publish/index.php';
 	$ch = curl_init();
-
-	$usr_agent = "WikiProjectMed Translation Dashboard/1.0 (https://mdwiki.toolforge.org/; tools.mdwiki@toolforge.org)";
 
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_USERAGENT, $usr_agent);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 
@@ -134,10 +132,12 @@ class ApiContentTranslationPublish extends ApiBase {
 		if ( $params['from'] === "mdwiki") {#$mdwiki_result
 			$t_Params = [
 				'title' => $title->getPrefixedDBkey(),
+				'revid' => $sourceRevisionId,
 				'text' => $wikitext,
 				'user' => $user_name,
 				'summary' => $summary,
 				'target' => $params['to'],
+				'campaign' => $params['campaign'],
 				'sourcetitle' => $params['sourcetitle'],
 			];
 
@@ -151,7 +151,7 @@ class ApiContentTranslationPublish extends ApiBase {
 
 		$apiParams = [
 			'action' => 'edit',
-			'title' => $title->getPrefixedDBkey(),
+			'title' => $params['to'] . "/" .$params['sourcetitle'], // $title->getPrefixedDBkey(),
 			'text' => $wikitext,
 			'summary' => $summary,
 		];
@@ -403,6 +403,7 @@ class ApiContentTranslationPublish extends ApiBase {
 				ParamValidator::PARAM_ISMULTI => true,
 			],
 			/** @todo These should be renamed to something all-lowercase and lacking a "wp" prefix */
+			'campaign' => null,
 			'wpCaptchaId' => null,
 			'wpCaptchaWord' => null,
 			'cxversion' => [

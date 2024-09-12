@@ -26,6 +26,7 @@ removableSections:
     - good article
     - /^(.*-)?Stub$/
     - Short description
+    - Mdwiki revid
     - Void
     - Italic title # T216044
     - About

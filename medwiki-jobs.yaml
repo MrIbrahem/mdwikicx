@@ -1,0 +1,7 @@
+
+# sql backup
+- name: backup
+  command: "$HOME/jobs/db_backup.sh"
+  schedule: '11 1 * * *'
+  image: mariadb
+  emails: none
